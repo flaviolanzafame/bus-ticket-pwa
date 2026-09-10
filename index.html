@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="mobile-web-app-capable" content="yes">
+<title>Abbonamento</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --navy:#152238; --navy-2:#1E314F;
+    --paper:#EFEAE0; --paper-2:#E4DECF;
+    --ink:#1A1A1A;
+    --stamp:#B23A2E; --stamp-dark:#7C2620;
+    --brass:#C79A46; --brass-light:#E4C378;
+    --teal:#2F6F5E; --teal-light:#DCEAE4;
+    --amber:#C77F1E;
+    --line: rgba(21,34,56,0.14);
+    --shadow: 0 18px 40px rgba(21,34,56,0.18);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0;padding:0;}
+  body{
+    font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;
+    background: var(--navy);
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(199,154,70,0.14), transparent 45%),
+      radial-gradient(circle at 85% 92%, rgba(47,111,94,0.16), transparent 40%);
+    color: var(--ink);
+    min-height:100vh;
+    padding: max(20px, env(safe-area-inset-top)) 16px calc(48px + env(safe-area-inset-bottom));
+  }
+  .wrap{ max-width:460px; margin:0 auto; }
+  .eyebrow{ color: rgba(239,234,224,0.55); font-size:12.5px; margin: 0 4px 4px; }
+  h1{ font-family:'Fraunces', serif; font-weight:600; font-size:23px; color: var(--paper); margin: 0 4px 16px; line-height:1.15; }
+  section{ background: var(--paper); border-radius:18px; padding:18px 18px 20px; margin-bottom:14px;
+    box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.4); }
+  .sec-title{ font-family:'Fraunces', serif; font-weight:600; font-size:16px; margin:0 0 4px;
+    display:flex; align-items:center; justify-content:space-between; gap:8px; }
+  .sec-sub{ font-size:12.5px; color:#6B6559; margin:0 0 14px; line-height:1.5; }
+
+  /* --- ticket of today (top) --- */
+  .ticket-status{ display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+  .status-dot{ width:9px; height:9px; border-radius:50%; flex-shrink:0; }
+  .status-dot.ok{ background: var(--teal); }
+  .status-dot.empty{ background: #B7AF9C; }
+  .status-text{ font-size:13.5px; font-weight:500; }
+  .ticket-preview{ border-radius:12px; overflow:hidden; border:1px solid var(--line); margin-bottom:12px; }
+  .ticket-preview img{ width:100%; display:block; }
+  .drop-zone{ border:1.5px dashed rgba(21,34,56,0.25); border-radius:12px; padding:20px 14px;
+    text-align:center; color:#8A8474; font-size:13px; cursor:pointer; margin-bottom:14px; }
+  .drop-zone:active{ background: var(--paper-2); }
+  .quick-row{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .quick-btn{ display:flex; flex-direction:column; align-items:flex-start; gap:5px;
+    padding:12px 13px 11px; border-radius:13px; text-decoration:none; }
+  .quick-btn.primary{ background: var(--navy); color: var(--paper); }
+  .quick-btn.secondary{ background: var(--paper-2); color: var(--navy); }
+  .quick-label{ font-family:'Fraunces', serif; font-size:14px; font-weight:600; line-height:1.2; }
+  .quick-sub{ font-size:10.5px; opacity:0.65; }
+
+  /* --- 3D CARD --- */
+  .stage{ perspective: 1300px; margin-bottom:14px; }
+  .card3d{ position:relative; width:100%; aspect-ratio: 1.586; transform-style: preserve-3d;
+    transition: transform 0.7s cubic-bezier(.2,.8,.2,1); cursor:pointer; }
+  .card3d.flipped{ transform: rotateY(180deg); }
+  .face{ position:absolute; inset:0; border-radius:16px; backface-visibility:hidden; overflow:hidden;
+    box-shadow: 0 14px 30px rgba(0,0,0,0.35); }
+  .face-front{ background: linear-gradient(135deg, var(--navy-2), var(--navy) 65%); color: var(--paper);
+    padding:16px 18px; display:flex; flex-direction:column; justify-content:space-between; }
+  .face-front::before{ content:""; position:absolute; inset:0;
+    background: repeating-linear-gradient(115deg, rgba(255,255,255,0.035) 0 2px, transparent 2px 26px); pointer-events:none; }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; }
+  .card-brand{ font-family:'Fraunces', serif; font-size:14px; opacity:0.9;}
+  .card-chip{ width:34px; height:24px; border-radius:5px; background: linear-gradient(135deg, var(--brass-light), var(--brass));
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); flex-shrink:0; }
+  .card-holder{ font-size:10.5px; text-transform:uppercase; letter-spacing:0.08em; opacity:0.55; }
+  .card-name{ font-family:'Fraunces', serif; font-size:19px; font-weight:500; line-height:1.15; margin:2px 0 8px; }
+  .card-hint{ font-size:10.5px; opacity:0.45; text-align:right; }
+  .card-id-row{ display:flex; align-items:center; gap:16px; flex:1; }
+  .card-photo{ width:68px; height:68px; border-radius:14px; overflow:hidden; flex-shrink:0; cursor:pointer;
+    background: linear-gradient(135deg, var(--brass-light), var(--brass));
+    display:flex; align-items:center; justify-content:center; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.15); }
+  .card-photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .card-initials{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; color: var(--navy); }
+  .card-id-text{ min-width:0; display:flex; flex-direction:column; }
+  .card-number-label{ font-size:10px; text-transform:uppercase; letter-spacing:0.07em; opacity:0.5; }
+  .card-number-value{ font-family:'IBM Plex Mono', monospace; font-size:15px; letter-spacing:0.04em; margin-top:2px; }
+  .face-back{ background: linear-gradient(135deg, var(--navy), var(--navy-2) 70%); transform: rotateY(180deg);
+    display:flex; flex-direction:column; }
+  .back-body{ padding:18px 20px; display:flex; flex-direction:column; gap:10px; flex:1; justify-content:center; }
+  .back-field{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+  .back-field-label{ font-size:11px; text-transform:uppercase; letter-spacing:0.06em; color:rgba(239,234,224,0.5); }
+  .back-field-value{ font-family:'IBM Plex Mono', monospace; font-size:12.5px; color: var(--paper); text-align:right; }
+  .barcode{ height:38px; border-radius:4px; margin-top:4px;
+    background: repeating-linear-gradient(90deg, var(--paper) 0 2px, transparent 2px 3px, var(--paper) 5px 6px, transparent 6px 9px, var(--paper) 9px 12px, transparent 12px 14px); opacity:0.85; }
+  .back-caption{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color:rgba(239,234,224,0.5); text-align:center; letter-spacing:0.08em; margin-top:2px;}
+
+  /* --- paper ticket (abbonamento) --- */
+  .ticket-card{ position:relative; margin:4px 0 16px; filter: drop-shadow(0 12px 20px rgba(0,0,0,0.35));
+    clip-path: polygon(
+      0% 0px, 12.5% 9px, 25% 0px, 37.5% 9px, 50% 0px, 62.5% 9px, 75% 0px, 87.5% 9px, 100% 0px,
+      100% calc(100% - 0px), 87.5% calc(100% - 9px), 75% calc(100% - 0px), 62.5% calc(100% - 9px),
+      50% calc(100% - 0px), 37.5% calc(100% - 9px), 25% calc(100% - 0px), 12.5% calc(100% - 9px), 0% calc(100% - 0px)
+    );
+    transition: transform 0.12s ease; cursor:default;
+  }
+  .ticket-card:active{ transform: scale(0.985); }
+  .ticket-body{ background: #FBFAF7; padding:22px 20px 18px; }
+  .ticket-row-top{ display:flex; align-items:center; justify-content:space-between; margin-bottom:2px; }
+  .ticket-company{ font-size:11px; text-transform:uppercase; letter-spacing:0.07em; color:#8A8474; }
+  .ticket-stamp{ width:22px; height:22px; border-radius:50%; border:2px solid var(--stamp); position:relative; flex-shrink:0; opacity:0.7; }
+  .ticket-stamp::after{ content:""; position:absolute; inset:5px; border-radius:50%; background: var(--stamp); }
+  .ticket-title{ font-family:'Fraunces', serif; font-weight:600; font-size:20px; color: var(--navy); margin-bottom:14px; }
+  .ticket-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:12px 14px; margin-bottom:16px; }
+  .ticket-field{ display:flex; flex-direction:column; gap:2px; }
+  .ticket-field-wide{ grid-column: 1 / -1; }
+  .tf-label{ font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#8A8474; }
+  .tf-value{ font-family:'IBM Plex Mono', monospace; font-size:14px; color: var(--ink); }
+  .ticket-barcode{ height:40px; border-radius:2px;
+    background: repeating-linear-gradient(90deg, var(--ink) 0 2px, transparent 2px 3px, var(--ink) 5px 6px, transparent 6px 8px, var(--ink) 8px 11px, transparent 11px 13px, var(--ink) 13px 14px, transparent 14px 17px);
+    opacity:0.85; }
+
+  /* --- codes (inside tessera section) --- */
+  .code-row{ display:flex; align-items:center; gap:8px; margin-bottom:10px; }
+  .code-row:last-child{ margin-bottom:0; }
+  .code-field{ flex:1; min-width:0; }
+  .code-field label{ display:block; font-size:11.5px; color:#8A8474; margin-bottom:4px; }
+  .code-field input{ width:100%; font-family:'IBM Plex Mono', monospace; font-size:15px; letter-spacing:0.03em;
+    padding:10px 11px; border-radius:10px; border:1px solid var(--line); background: #fff; color: var(--ink); }
+  .code-field input:focus{ outline:none; border-color: var(--brass); box-shadow: 0 0 0 3px rgba(199,154,70,0.18); }
+  .icon-btn{ flex-shrink:0; width:40px; height:40px; border-radius:10px; border:1px solid var(--line);
+    background:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; color: var(--navy);
+    margin-top:18px; cursor:pointer; transition: transform 0.12s ease, background 0.15s ease; }
+  .icon-btn:active{ transform: scale(0.92); background: var(--teal-light); }
+  .icon-btn.copied{ background: var(--teal-light); color: var(--teal); border-color: var(--teal); }
+
+  /* --- counters + expiry --- */
+  .stat-grid{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:12px; }
+  .stat{ background: var(--paper-2); border-radius:12px; padding:12px 12px 11px; }
+  .stat-label{ font-size:11px; color:#8A8474; margin-bottom:4px; }
+  .stat-value{ font-family:'Fraunces', serif; font-size:22px; font-weight:600; line-height:1; }
+  .stat-value.warn{ color: var(--amber); }
+  .stat-value.danger{ color: var(--stamp); }
+  .stat-value.ok{ color: var(--teal); }
+  .stat-note{ font-size:11px; color:#8A8474; margin-top:3px; }
+  .row-between{ display:flex; align-items:center; justify-content:space-between; gap:10px; }
+  .btn{ font-family:'Inter',sans-serif; font-size:13.5px; font-weight:500; padding:10px 14px; border-radius:10px;
+    border:1px solid var(--line); background:#fff; cursor:pointer; color: var(--ink); transition: transform 0.12s ease; }
+  .btn:active{ transform: scale(0.96); }
+  .btn.primary{ background: var(--navy); color: var(--paper); border-color: var(--navy); }
+  .btn.ghost{ background: transparent; }
+  .btn.small{ padding:7px 11px; font-size:12.5px; }
+  .btn.danger-outline{ color: var(--stamp-dark); border-color: rgba(178,58,46,0.35); }
+  .expiry-item{ display:flex; align-items:center; justify-content:space-between; gap:10px; padding:10px 0; border-bottom:1px solid var(--line); }
+  .expiry-item:last-child{ border-bottom:none; padding-bottom:0; }
+  .expiry-left label{ display:block; font-size:13.5px; margin-bottom:2px; }
+  .expiry-left input[type=date]{ font-family:'Inter',sans-serif; font-size:12.5px; border:none; background:none; color:#8A8474; padding:0; }
+  .expiry-right{ text-align:right; flex-shrink:0; }
+  .expiry-days{ font-family:'Fraunces', serif; font-size:20px; font-weight:600; }
+  .expiry-days-label{ font-size:10.5px; color:#8A8474; }
+
+  /* --- links --- */
+  .link-list{ display:flex; flex-direction:column; gap:8px; }
+  .link-item{ display:flex; align-items:center; gap:10px; padding:11px 12px; border-radius:12px; background:#fff;
+    border:1px solid var(--line); text-decoration:none; color: var(--ink); }
+  .link-item:active{ background: var(--paper-2); }
+  .link-dot{ width:8px; height:8px; border-radius:50%; background: var(--brass); flex-shrink:0; }
+  .link-text{ flex:1; font-size:14px; font-weight:500; }
+  .link-arrow{ color:#8A8474; font-size:14px; }
+  .edit-links{ margin-top:10px; }
+  .edit-links input{ width:100%; font-size:12.5px; padding:8px 10px; border-radius:8px; border:1px solid var(--line);
+    margin-bottom:7px; font-family:'Inter',sans-serif; }
+  .edit-links input:last-child{ margin-bottom:0; }
+
+  .toast{ position:fixed; left:50%; bottom:28px; transform:translateX(-50%) translateY(20px);
+    background: var(--navy); color: var(--paper); padding:10px 18px; border-radius:30px; font-size:13px;
+    opacity:0; transition: all 0.25s ease; pointer-events:none; box-shadow: 0 10px 24px rgba(0,0,0,0.3); z-index:50; }
+  .toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+  .footer-note{ text-align:center; font-size:11px; color:rgba(239,234,224,0.4); margin-top:18px; line-height:1.6; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow" id="dateLine"></p>
+  <h1>Il mio abbonamento</h1>
+
+  <section>
+    <p class="sec-title">Biglietto di oggi</p>
+    <p class="sec-sub">Vale per andata e ritorno. Si cancella da solo il giorno dopo, così ricominci sempre da zero.</p>
+    <div class="ticket-status">
+      <span class="status-dot empty" id="ticketDot"></span>
+      <span class="status-text" id="ticketStatusText">Nessun biglietto salvato</span>
+    </div>
+    <div id="ticketDisplay"></div>
+    <input type="file" id="ticketInput" accept="image/*" style="display:none;">
+    <div class="drop-zone" id="dropZone">tocca per caricare lo screenshot del biglietto</div>
+    <div class="quick-row">
+      <a class="quick-btn primary" id="quickCreate" href="#" target="_blank" rel="noopener">
+        <span class="quick-label">Crea biglietto</span>
+        <span class="quick-sub">apri il sito ↗</span>
+      </a>
+      <a class="quick-btn secondary" id="quickChange" href="#" target="_blank" rel="noopener">
+        <span class="quick-label">Cambia orario</span>
+        <span class="quick-sub">apri il sito ↗</span>
+      </a>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-title">Tessera</p>
+    <p class="sec-sub">Tocca la tessera per girarla. Tocca la foto per caricarla.</p>
+    <div class="stage">
+      <div class="card3d" id="card3d">
+        <div class="face face-front">
+          <div class="card-top">
+            <span class="card-brand" id="cardCompany">Compagnia di trasporti</span>
+            <div class="card-chip"></div>
+          </div>
+          <div class="card-id-row">
+            <div class="card-photo" id="cardPhotoBox"><span class="card-initials" id="cardInitials">?</span></div>
+            <div class="card-id-text">
+              <div class="card-holder">Titolare</div>
+              <div class="card-name" id="cardHolderName">Nome Cognome</div>
+              <div class="card-number-label">N. tessera</div>
+              <div class="card-number-value" id="cardNumberValue">—</div>
+            </div>
+          </div>
+          <div class="card-hint">tocca per girare</div>
+        </div>
+        <div class="face face-back">
+          <div class="back-body">
+            <div class="back-field"><span class="back-field-label">Tratta</span><span class="back-field-value" id="cardRouteBack">—</span></div>
+            <div class="back-field"><span class="back-field-label">Validità</span><span class="back-field-value" id="cardValidityBack">—</span></div>
+            <div class="barcode"></div>
+            <div class="back-caption">TESSERA UTENTE</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <input type="file" id="photoInput" accept="image/*" style="display:none;">
+    <div class="code-row">
+      <div class="code-field">
+        <label>Nome e cognome</label>
+        <input type="text" id="holderName" placeholder="Es. Mario Rossi" autocomplete="off">
+      </div>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Compagnia di trasporti</label>
+        <input type="text" id="companyName" placeholder="Es. SAIS Trasporti" autocomplete="off">
+      </div>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Numero tessera utente</label>
+        <input type="text" id="userCode" inputmode="numeric" placeholder="Es. 4021789356" autocomplete="off">
+      </div>
+      <button class="icon-btn" id="copyUser" aria-label="Copia codice tessera">⧉</button>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Tratta (da → a)</label>
+        <input type="text" id="route" placeholder="Es. Città A → Città B" autocomplete="off">
+      </div>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Emesso il</label>
+        <input type="date" id="validFrom">
+      </div>
+      <div class="code-field">
+        <label>Valido sino al</label>
+        <input type="date" id="validTo">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-title">Biglietto abbonamento</p>
+    <p class="sec-sub">Il carnet vero e proprio, con codice titolo e corse rimanenti.</p>
+    <div class="ticket-card" id="ticketCard">
+      <div class="ticket-body">
+        <div class="ticket-row-top">
+          <span class="ticket-company" id="ticketCompany">Compagnia di trasporti</span>
+          <span class="ticket-stamp"></span>
+        </div>
+        <div class="ticket-title">Abbonamento</div>
+        <div class="ticket-grid">
+          <div class="ticket-field"><span class="tf-label">Codice titolo</span><span class="tf-value" id="ticketCode">—</span></div>
+          <div class="ticket-field"><span class="tf-label">Corse</span><span class="tf-value" id="ticketRides">—</span></div>
+          <div class="ticket-field ticket-field-wide"><span class="tf-label">Tratta</span><span class="tf-value" id="ticketRoute">—</span></div>
+          <div class="ticket-field"><span class="tf-label">Emesso il</span><span class="tf-value" id="ticketIssued">—</span></div>
+          <div class="ticket-field"><span class="tf-label">Valido sino al</span><span class="tf-value" id="ticketValid">—</span></div>
+          <div class="ticket-field" id="ticketPriceField" style="display:none;"><span class="tf-label">Prezzo</span><span class="tf-value" id="ticketPrice">—</span></div>
+        </div>
+        <div class="ticket-barcode"></div>
+      </div>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Codice abbonamento (codice titolo)</label>
+        <input type="text" id="subCode" inputmode="numeric" placeholder="Es. 7788012234" autocomplete="off">
+      </div>
+      <button class="icon-btn" id="copySub" aria-label="Copia codice abbonamento">⧉</button>
+    </div>
+    <div class="code-row">
+      <div class="code-field">
+        <label>Prezzo (opzionale)</label>
+        <input type="text" id="price" placeholder="Es. 45,00 €" autocomplete="off">
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-title">Biglietti e scadenze</p>
+    <div class="stat-grid">
+      <div class="stat">
+        <div class="stat-label">Biglietti rimasti</div>
+        <div class="stat-value" id="ticketsLeft">—</div>
+        <div class="stat-note" id="ticketsNote"></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Rinnovo</div>
+        <div class="stat-value" id="renewalType" style="font-size:15px;">—</div>
+        <div class="stat-note" id="renewalDate"></div>
+      </div>
+    </div>
+    <div class="row-between" style="margin-bottom:14px;">
+      <div style="display:flex; gap:8px;">
+        <button class="btn primary small" id="useTicket">Usa un biglietto</button>
+        <button class="btn ghost small" id="resetTickets">Reimposta</button>
+      </div>
+      <button class="btn ghost small" id="editTotals">Modifica</button>
+    </div>
+    <div id="totalsEdit" style="display:none; margin-bottom:14px;">
+      <div class="code-row" style="align-items:flex-end;">
+        <div class="code-field">
+          <label>Tipo abbonamento</label>
+          <select id="subType" style="width:100%; padding:10px 11px; border-radius:10px; border:1px solid var(--line); font-family:'Inter',sans-serif; font-size:14px;">
+            <option value="settimanale">Settimanale</option>
+            <option value="mensile">Mensile</option>
+          </select>
+        </div>
+      </div>
+      <div class="code-row">
+        <div class="code-field"><label>Biglietti totali del periodo</label><input type="number" id="totalTickets" min="1" placeholder="Es. 10"></div>
+      </div>
+      <div class="code-row">
+        <div class="code-field"><label>Data prossimo rinnovo</label><input type="date" id="renewalDateInput"></div>
+      </div>
+    </div>
+    <div class="expiry-item">
+      <div class="expiry-left"><label>Scadenza tessera utente</label><input type="date" id="cardExpiry"></div>
+      <div class="expiry-right"><div class="expiry-days" id="cardExpiryDays">—</div><div class="expiry-days-label">giorni</div></div>
+    </div>
+    <div class="expiry-item">
+      <div class="expiry-left"><label>Scadenza abbonamento</label><input type="date" id="subExpiry"></div>
+      <div class="expiry-right"><div class="expiry-days" id="subExpiryDays">—</div><div class="expiry-days-label">giorni</div></div>
+    </div>
+  </section>
+
+  <section>
+    <p class="sec-title">Link<button class="btn ghost small" id="toggleEditLinks">Modifica</button></p>
+    <div class="link-list" id="linkList"></div>
+    <div class="edit-links" id="editLinksBox" style="display:none;">
+      <input type="text" id="linkALabel" placeholder="Nome link">
+      <input type="url" id="linkAUrl" placeholder="https://...">
+      <input type="text" id="linkBLabel" placeholder="Nome link">
+      <input type="url" id="linkBUrl" placeholder="https://...">
+      <input type="text" id="linkCLabel" placeholder="Nome link">
+      <input type="url" id="linkCUrl" placeholder="https://...">
+      <button class="btn primary small" id="saveLinks" style="width:100%; margin-top:4px;">Salva link</button>
+    </div>
+  </section>
+
+  <p class="footer-note">Dati salvati solo su questo dispositivo, ad uso personale.<br>Aggiungi questa pagina alla schermata Home per usarla come app.</p>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+const toastEl = $('toast');
+function toast(msg){
+  toastEl.textContent = msg;
+  toastEl.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(()=> toastEl.classList.remove('show'), 1800);
+}
+
+const monthNames = ['gennaio','febbraio','marzo','aprile','maggio','giugno','luglio','agosto','settembre','ottobre','novembre','dicembre'];
+const dayNames = ['domenica','lunedì','martedì','mercoledì','giovedì','venerdì','sabato'];
+function todayKey(){
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+}
+(function(){
+  const d = new Date();
+  $('dateLine').textContent = dayNames[d.getDay()] + ' ' + d.getDate() + ' ' + monthNames[d.getMonth()];
+})();
+
+async function storeGet(key){
+  try{ const raw = localStorage.getItem('bus-app:' + key); return raw ? JSON.parse(raw) : null; }
+  catch(e){ return null; }
+}
+async function storeSet(key, value){
+  try{ localStorage.setItem('bus-app:' + key, JSON.stringify(value)); }
+  catch(e){ toast('Errore nel salvataggio'); }
+}
+
+let state = {
+  codes: { userCode:'', subCode:'' },
+  links: {
+    aLabel:'Crea biglietto', aUrl:'',
+    bLabel:'Cambia orario biglietto', bUrl:'',
+    cLabel:'Avvisi', cUrl:''
+  },
+  card: { companyName:'', holderName:'', route:'', validFrom:'', validTo:'', photo:null, price:'' },
+  counter: { type:'settimanale', total:10, remaining:10, renewalDate:'' },
+  expiry: { cardExpiry:'', subExpiry:'' },
+  ticket: null
+};
+
+function maskCode(c){
+  if(!c) return '•••• •••• ••';
+  const s = c.replace(/\s/g,'');
+  if(s.length <= 4) return s;
+  return s.slice(0,4) + ' •••• ' + s.slice(-2);
+}
+
+function initials(name){
+  if(!name) return '?';
+  const parts = name.trim().split(/\s+/);
+  const first = parts[0] ? parts[0][0] : '';
+  const last = parts.length > 1 ? parts[parts.length-1][0] : '';
+  return (first + last).toUpperCase() || '?';
+}
+function formatDateShort(d){
+  if(!d) return '—';
+  const [y,m,day] = d.split('-');
+  return day + '/' + m + '/' + y.slice(2);
+}
+function renderCard(){
+  const c = state.card;
+  $('cardCompany').textContent = c.companyName || 'Compagnia di trasporti';
+  $('cardHolderName').textContent = c.holderName || 'Nome Cognome';
+  $('cardNumberValue').textContent = state.codes.userCode || '—';
+  $('cardRouteBack').textContent = c.route || '—';
+  $('cardValidityBack').textContent = formatDateShort(c.validFrom) + ' – ' + formatDateShort(c.validTo);
+  const photoBox = $('cardPhotoBox');
+  photoBox.innerHTML = c.photo ? '<img src="' + c.photo + '">' : '<span class="card-initials">' + initials(c.holderName) + '</span>';
+  renderTicketCard();
+}
+function renderTicketCard(){
+  const c = state.card;
+  $('ticketCompany').textContent = c.companyName || 'Compagnia di trasporti';
+  $('ticketCode').textContent = state.codes.subCode || '—';
+  $('ticketRides').textContent = state.counter.total || '—';
+  $('ticketRoute').textContent = c.route || '—';
+  $('ticketIssued').textContent = formatDateShort(c.validFrom);
+  $('ticketValid').textContent = formatDateShort(c.validTo);
+  const priceField = $('ticketPriceField');
+  if(c.price){ priceField.style.display = ''; $('ticketPrice').textContent = c.price; }
+  else { priceField.style.display = 'none'; }
+}
+function renderCardFields(){
+  $('holderName').value = state.card.holderName || '';
+  $('companyName').value = state.card.companyName || '';
+  $('route').value = state.card.route || '';
+  $('validFrom').value = state.card.validFrom || '';
+  $('validTo').value = state.card.validTo || '';
+  $('price').value = state.card.price || '';
+}
+function renderCodes(){
+  $('userCode').value = state.codes.userCode || '';
+  $('subCode').value = state.codes.subCode || '';
+}
+function daysUntil(dateStr){
+  if(!dateStr) return null;
+  const target = new Date(dateStr + 'T00:00:00');
+  const now = new Date(); now.setHours(0,0,0,0);
+  return Math.round((target - now) / 86400000);
+}
+function renderExpiry(){
+  $('cardExpiry').value = state.expiry.cardExpiry || '';
+  $('subExpiry').value = state.expiry.subExpiry || '';
+  [['cardExpiry','cardExpiryDays'],['subExpiry','subExpiryDays']].forEach(([src, out])=>{
+    const days = daysUntil(state.expiry[src]);
+    const el = $(out);
+    if(days === null){ el.textContent = '—'; el.className='expiry-days'; return; }
+    el.textContent = days;
+    el.className = 'expiry-days' + (days <= 0 ? ' danger' : days <= 10 ? ' warn' : '');
+  });
+}
+function renderCounter(){
+  const c = state.counter;
+  const left = $('ticketsLeft');
+  left.textContent = c.remaining;
+  left.className = 'stat-value' + (c.remaining <= 0 ? ' danger' : c.remaining <= Math.ceil(c.total*0.2) ? ' warn' : ' ok');
+  $('ticketsNote').textContent = 'su ' + c.total + ' totali';
+  $('renewalType').textContent = c.type === 'mensile' ? 'Mensile' : 'Settimanale';
+  $('renewalDate').textContent = c.renewalDate ? (()=>{ const d = daysUntil(c.renewalDate); return d !== null ? (d >= 0 ? 'tra ' + d + ' giorni' : 'da rinnovare') : ''; })() : '';
+  $('subType').value = c.type;
+  $('totalTickets').value = c.total;
+  $('renewalDateInput').value = c.renewalDate || '';
+}
+function renderLinks(){
+  const l = state.links;
+  const items = [[l.aLabel,l.aUrl],[l.bLabel,l.bUrl],[l.cLabel,l.cUrl]].filter(([label,url]) => url);
+  $('linkList').innerHTML = items.map(([label,url]) =>
+    '<a class="link-item" href="' + url.replace(/"/g,'&quot;') + '" target="_blank" rel="noopener">' +
+    '<span class="link-dot"></span><span class="link-text">' + label + '</span><span class="link-arrow">↗</span></a>'
+  ).join('');
+  $('linkALabel').value = l.aLabel; $('linkAUrl').value = l.aUrl;
+  $('linkBLabel').value = l.bLabel; $('linkBUrl').value = l.bUrl;
+  $('linkCLabel').value = l.cLabel; $('linkCUrl').value = l.cUrl;
+  $('quickCreate').href = l.aUrl || '#';
+  $('quickChange').href = l.bUrl || '#';
+}
+function renderTicket(){
+  const box = $('ticketDisplay');
+  const dz = $('dropZone');
+  const dot = $('ticketDot');
+  const statusText = $('ticketStatusText');
+  if(state.ticket && state.ticket.data){
+    dz.style.display = 'none';
+    dot.className = 'status-dot ok';
+    statusText.textContent = 'Salvato alle ' + state.ticket.savedAt;
+    box.innerHTML = '<div class="ticket-preview"><img src="' + state.ticket.data + '"></div>' +
+      '<div class="row-between" style="margin-bottom:14px;"><span></span>' +
+      '<button class="btn danger-outline small" id="deleteTicket">Elimina</button></div>';
+    $('deleteTicket').onclick = async ()=>{
+      state.ticket = null;
+      await storeSet('ticket-image', null);
+      renderTicket();
+      toast('Biglietto eliminato');
+    };
+  } else {
+    dot.className = 'status-dot empty';
+    statusText.textContent = 'Nessun biglietto salvato';
+    box.innerHTML = '';
+    dz.style.display = 'block';
+  }
+}
+
+async function loadAll(){
+  const [codes, links, counter, expiry, ticket, card] = await Promise.all([
+    storeGet('profile-data'), storeGet('links-data'), storeGet('counter-data'), storeGet('expiry-data'), storeGet('ticket-image'), storeGet('card-data')
+  ]);
+  if(codes) state.codes = Object.assign(state.codes, codes);
+  if(links) state.links = Object.assign(state.links, links);
+  if(counter) state.counter = Object.assign(state.counter, counter);
+  if(expiry) state.expiry = Object.assign(state.expiry, expiry);
+  if(ticket) state.ticket = ticket;
+  if(card) state.card = Object.assign(state.card, card);
+
+  if(state.ticket && state.ticket.savedDate && state.ticket.savedDate !== todayKey()){
+    state.ticket = null;
+    await storeSet('ticket-image', null);
+  }
+
+  renderCard(); renderCardFields(); renderCodes(); renderExpiry(); renderCounter(); renderLinks(); renderTicket();
+  if(!links){ await storeSet('links-data', state.links); }
+}
+loadAll();
+
+$('card3d').addEventListener('click', ()=> $('card3d').classList.toggle('flipped'));
+
+async function copyText(text, btn){
+  if(!text){ toast('Campo vuoto'); return; }
+  try{
+    await navigator.clipboard.writeText(text);
+    btn.classList.add('copied'); btn.textContent = '✓';
+    setTimeout(()=>{ btn.classList.remove('copied'); btn.textContent = '⧉'; }, 1200);
+    toast('Copiato');
+  }catch(e){ toast('Impossibile copiare'); }
+}
+$('copyUser').addEventListener('click', ()=> copyText($('userCode').value.trim(), $('copyUser')));
+$('copySub').addEventListener('click', ()=> copyText($('subCode').value.trim(), $('copySub')));
+
+let saveTimer;
+function debounceSaveCodes(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async ()=>{
+    state.codes.userCode = $('userCode').value.trim();
+    state.codes.subCode = $('subCode').value.trim();
+    await storeSet('profile-data', state.codes);
+    renderCard();
+  }, 400);
+}
+$('userCode').addEventListener('input', debounceSaveCodes);
+$('subCode').addEventListener('input', debounceSaveCodes);
+
+let cardSaveTimer;
+function debounceSaveCard(){
+  clearTimeout(cardSaveTimer);
+  cardSaveTimer = setTimeout(async ()=>{
+    state.card.holderName = $('holderName').value.trim();
+    state.card.companyName = $('companyName').value.trim();
+    state.card.route = $('route').value.trim();
+    state.card.price = $('price').value.trim();
+    await storeSet('card-data', state.card);
+    renderCard();
+  }, 400);
+}
+$('holderName').addEventListener('input', debounceSaveCard);
+$('companyName').addEventListener('input', debounceSaveCard);
+$('route').addEventListener('input', debounceSaveCard);
+$('price').addEventListener('input', debounceSaveCard);
+$('validFrom').addEventListener('change', async ()=>{
+  state.card.validFrom = $('validFrom').value;
+  await storeSet('card-data', state.card);
+  renderCard();
+});
+$('validTo').addEventListener('change', async ()=>{
+  state.card.validTo = $('validTo').value;
+  await storeSet('card-data', state.card);
+  renderCard();
+});
+
+$('cardPhotoBox').addEventListener('click', (e)=>{
+  e.stopPropagation();
+  $('photoInput').click();
+});
+$('photoInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    img.onload = async ()=>{
+      const size = 160;
+      const canvas = document.createElement('canvas');
+      canvas.width = size; canvas.height = size;
+      const ctx = canvas.getContext('2d');
+      const scale = Math.max(size / img.width, size / img.height);
+      const w = img.width * scale, h = img.height * scale;
+      ctx.drawImage(img, (size - w) / 2, (size - h) / 2, w, h);
+      state.card.photo = canvas.toDataURL('image/jpeg', 0.8);
+      await storeSet('card-data', state.card);
+      renderCard();
+      toast('Foto aggiornata');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+
+$('useTicket').addEventListener('click', async ()=>{
+  if(state.counter.remaining > 0){
+    state.counter.remaining -= 1;
+    await storeSet('counter-data', state.counter);
+    renderCounter();
+    toast('Biglietto usato');
+  } else { toast('Nessun biglietto rimasto'); }
+});
+$('resetTickets').addEventListener('click', async ()=>{
+  state.counter.remaining = state.counter.total;
+  await storeSet('counter-data', state.counter);
+  renderCounter();
+  toast('Contatore reimpostato');
+});
+$('editTotals').addEventListener('click', ()=>{
+  const box = $('totalsEdit');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+});
+[['subType','type'],['totalTickets','total'],['renewalDateInput','renewalDate']].forEach(([id,key])=>{
+  $(id).addEventListener('change', async ()=>{
+    const val = $(id).value;
+    state.counter[key] = key === 'total' ? (parseInt(val) || 1) : val;
+    if(key === 'total' && state.counter.remaining > state.counter.total) state.counter.remaining = state.counter.total;
+    await storeSet('counter-data', state.counter);
+    renderCounter();
+    renderTicketCard();
+  });
+});
+$('cardExpiry').addEventListener('change', async ()=>{
+  state.expiry.cardExpiry = $('cardExpiry').value;
+  await storeSet('expiry-data', state.expiry);
+  renderExpiry();
+});
+$('subExpiry').addEventListener('change', async ()=>{
+  state.expiry.subExpiry = $('subExpiry').value;
+  await storeSet('expiry-data', state.expiry);
+  renderExpiry();
+});
+$('toggleEditLinks').addEventListener('click', ()=>{
+  const box = $('editLinksBox');
+  box.style.display = box.style.display === 'none' ? 'block' : 'none';
+});
+$('saveLinks').addEventListener('click', async ()=>{
+  state.links = {
+    aLabel: $('linkALabel').value.trim() || 'Link', aUrl: $('linkAUrl').value.trim(),
+    bLabel: $('linkBLabel').value.trim() || 'Link', bUrl: $('linkBUrl').value.trim(),
+    cLabel: $('linkCLabel').value.trim() || 'Link', cUrl: $('linkCUrl').value.trim()
+  };
+  await storeSet('links-data', state.links);
+  renderLinks();
+  $('editLinksBox').style.display = 'none';
+  toast('Link salvati');
+});
+
+$('dropZone').addEventListener('click', ()=> $('ticketInput').click());
+$('ticketInput').addEventListener('change', (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const img = new Image();
+  const reader = new FileReader();
+  reader.onload = (ev)=>{
+    img.onload = async ()=>{
+      const maxW = 900;
+      const scale = Math.min(1, maxW / img.width);
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width * scale;
+      canvas.height = img.height * scale;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.72);
+      const now = new Date();
+      const savedAt = String(now.getHours()).padStart(2,'0') + ':' + String(now.getMinutes()).padStart(2,'0');
+      state.ticket = { data: dataUrl, savedAt: savedAt, savedDate: todayKey() };
+      await storeSet('ticket-image', state.ticket);
+      renderTicket();
+      toast('Biglietto salvato');
+    };
+    img.src = ev.target.result;
+  };
+  reader.readAsDataURL(file);
+});
+</script>
+</body>
+</html>
