@@ -20,7 +20,7 @@ The application is completely client-side: there is no backend, no account syste
 
 The application is currently deployed and accessible at:
 
-[flaviolanzafame.github.io/bus-ticket-pwa](https://flaviolanzafame.github.io/bus-ticket-pwa/?utm_source=chatgpt.com)
+https://flaviolanzafame.github.io/bus-ticket-pwa/
 
 ---
 
