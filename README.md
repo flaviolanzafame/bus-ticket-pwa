@@ -8,11 +8,19 @@
 ![Status](https://img.shields.io/badge/Status-In%20Development-orange?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-Personal-lightgrey?style=for-the-badge)
 
-**Bus Ticket PWA** is a small personal web application designed to simplify the daily process of creating and managing a bus ticket.
+**Bus Ticket PWA** is a small personal, mobile-first web application designed to simplify the daily process of creating and managing a bus ticket.
 
 It provides a single place to store the information needed for the transport company's website, quickly copy the required codes, access frequently used pages, keep track of the subscription, and save the current day's ticket for later access.
 
 The application is completely client-side: there is no backend, no account system, and no database. Personal data is stored locally in the browser.
+
+---
+
+### 🌐 Live
+
+The application is currently deployed and accessible at:
+
+[flaviolanzafame.github.io/bus-ticket-pwa](https://flaviolanzafame.github.io/bus-ticket-pwa/?utm_source=chatgpt.com)
 
 ---
 
@@ -25,13 +33,13 @@ The transport service I use to travel to school requires two pieces of informati
 * the **user card number**
 * the **subscription code**
 
-Both are long alphanumeric codes, and the website does not reliably retain them through browser autofill. As a result, the same information has to be retrieved and entered again every day.
+Both are long codes, and the website does not reliably retain them through browser autofill. As a result, the same information has to be retrieved and entered again every day.
 
 The ticket itself also presents another inconvenience: after some time, the ticket page logs the user out. If the ticket needs to be checked again later in the day, the login process has to be repeated.
 
 This application was created as a small personal utility to make that workflow more convenient.
 
-Instead of replacing the transport company's website, it acts as a **personal dashboard around it**:
+Rather than replacing or automating the transport company's website, it acts as a **personal dashboard around it**:
 
 ```text
 Store personal information once
@@ -75,7 +83,7 @@ The goal is simply to reduce the amount of repetitive work required for somethin
 * Store the **10-digit user card number**
 * Store the **subscription/title code**
 * Copy either code with a single tap
-* Display the card number and subscription information directly in the interface
+* Keep the required information immediately accessible
 
 ### 🔗 Quick Links
 
@@ -106,7 +114,7 @@ The goal is simply to reduce the amount of repetitive work required for somethin
 
 The application is built as a **single static HTML file** containing the interface, styling, and JavaScript logic.
 
-No external application server is required.
+No application server or build system is required.
 
 ### Local Data
 
@@ -169,9 +177,9 @@ Save it in the app
 Access the ticket again when needed
 ```
 
-The app does **not** automatically log into or interact with the transport company's website. The actual ticket creation remains on the official website.
+The app does **not** automatically log into or interact with the transport company's website.
 
-The application simply keeps the information and shortcuts needed for that process immediately accessible.
+The actual ticket creation remains on the official website. The application simply keeps the information and shortcuts needed for that process immediately accessible.
 
 ---
 
@@ -182,7 +190,7 @@ The application simply keeps the information and shortcuts needed for that proce
 * A modern web browser
 * JavaScript enabled
 * An `https://` origin for reliable browser storage
-* Safari on iPhone if you want to use it as a Home Screen app
+* A mobile or desktop device
 
 ### Run Locally
 
@@ -208,22 +216,43 @@ Then open:
 http://localhost:8000
 ```
 
-> Opening the file directly with `file://` is not recommended, particularly on iOS, as browser storage behaviour can be inconsistent.
+> Opening the file directly with `file://` is not recommended, particularly on mobile browsers, as browser storage behaviour can be inconsistent.
 
 ---
 
-## 📱 Add to Home Screen
+## 📱 Mobile Use
 
-The interface is designed primarily for mobile use.
+The interface is designed primarily for mobile devices and can be used directly from a browser.
 
-On iPhone:
+### 🍎 iPhone / iPad
 
-1. Open the deployed application in **Safari**
+Using **Safari**:
+
+1. Open the deployed application
 2. Tap **Share**
 3. Select **Add to Home Screen**
-4. Launch the application from the Home Screen
+4. Confirm the installation
+5. Launch the app from the Home Screen
 
-This provides a more app-like experience without requiring a native iOS application.
+This provides an app-like experience without requiring a native iOS application.
+
+### 🤖 Android
+
+Using **Google Chrome**:
+
+1. Open the deployed application
+2. Open the browser menu (`⋮`)
+3. Select **Add to Home screen** or **Install app**, depending on the browser and device
+4. Confirm
+5. Launch the application from the Home Screen
+
+Other Chromium-based Android browsers may provide a similar option.
+
+### 💻 Desktop
+
+The application can also be used from a desktop browser. No installation is required.
+
+Simply open the deployed page and use it normally.
 
 ---
 
@@ -254,7 +283,7 @@ There is:
 * **No analytics or tracking implemented by the application**
 * **No server-side storage of personal data**
 
-The public repository only contains the application itself. Personal information is entered at runtime by the user.
+The public repository and deployed page contain only the application itself. Personal information is entered at runtime by the user.
 
 > **Important:** local storage belongs to the specific browser and origin on the device. Clearing browser data, changing browsers, or using another device will not transfer the stored information.
 
@@ -282,15 +311,18 @@ No backend.
 
 ```text
 bus-ticket-pwa/
-└── index.html
+├── index.html
+├── LICENSE
+└── README.md
 ```
 
-The application is intentionally kept as a single file to make it simple to run, deploy, and maintain.
+The application is intentionally kept as a single HTML file to make it simple to run, deploy, and maintain.
 
 ---
 
 ## 📄 License
 
+Released under the [Apache License 2.0](LICENSE).
 
 ---
 
