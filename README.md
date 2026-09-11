@@ -16,7 +16,7 @@ The application is completely client-side: there is no backend, no account syste
 
 ---
 
-### 🌐 Live
+## 🌐 Live
 
 The application is currently deployed and accessible at:
 
