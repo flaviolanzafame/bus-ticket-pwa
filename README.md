@@ -316,8 +316,6 @@ bus-ticket-pwa/
 └── README.md
 ```
 
-The application is intentionally kept as a single HTML file to make it simple to run, deploy, and maintain.
-
 ---
 
 ## 📄 License
