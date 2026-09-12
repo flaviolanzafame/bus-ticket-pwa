@@ -224,7 +224,7 @@ http://localhost:8000
 
 The interface is designed primarily for mobile devices and can be used directly from a browser.
 
-### 🍎 iPhone / iPad
+### 🍎 iOS
 
 Using **Safari**:
 
